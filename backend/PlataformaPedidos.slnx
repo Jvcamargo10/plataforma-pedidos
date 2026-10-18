@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Compartilhado/Compartilhado.csproj" />
+    <Project Path="src/Pedidos.Api/Pedidos.Api.csproj" />
+    <Project Path="src/Pagamentos.Worker/Pagamentos.Worker.csproj" />
+    <Project Path="src/Notificacoes.Api/Notificacoes.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PlataformaPedidos.Tests/PlataformaPedidos.Tests.csproj" />
+  </Folder>
+</Solution>

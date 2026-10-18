@@ -1,0 +1,22 @@
+# .NET
+bin/
+obj/
+*.db
+*.db-shm
+*.db-wal
+appsettings.Development.json
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+out-tsc/
+coverage/
+
+# Editores
+.vscode/
+.idea/
+*.DS_Store
+next-env.d.ts
+.next/
+out/

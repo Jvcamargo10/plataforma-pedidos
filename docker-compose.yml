@@ -1,0 +1,39 @@
+# Sobe RabbitMQ, Jaeger e os três serviços. O front roda à parte: cd frontend && npm run dev
+services:
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports: ["5672:5672", "15672:15672"]   # painel: http://localhost:15672 (guest/guest)
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      retries: 20
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.62.0
+    ports: ["16686:16686", "4317:4317"]   # traces: http://localhost:16686
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+
+  pedidos:
+    build: { context: ., args: { PROJETO: Pedidos.Api } }
+    ports: ["5101:8080"]
+    environment: &comum
+      Mensageria__Host: rabbitmq
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
+      Banco__Conexao: Data Source=/dados/pedidos.db
+    volumes: ["pedidos-dados:/dados"]
+    depends_on: { rabbitmq: { condition: service_healthy } }
+
+  pagamentos:
+    build: { context: ., args: { PROJETO: Pagamentos.Worker } }
+    environment: *comum
+    depends_on: { rabbitmq: { condition: service_healthy } }
+
+  notificacoes:
+    build: { context: ., args: { PROJETO: Notificacoes.Api } }
+    ports: ["5103:8080"]
+    environment: *comum
+    depends_on: { rabbitmq: { condition: service_healthy } }
+
+volumes:
+  pedidos-dados:
